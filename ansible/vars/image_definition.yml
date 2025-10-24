@@ -14,16 +14,36 @@ builder_compose_pkgs:
 - cockpit-machines
 - cockpit-podman
 - cockpit
-- cloud-init
 builder_compose_customizations:
   services:
-    enabled: ["cockpit.socket", "cloud-init", "firewalld", "podman-auto-update.timer"]
+    enabled: ["cockpit.socket", "firewalld"]
   firewall:
     services:
       enabled: ["http", "https", "ssh", "cockpit"]
       disabled: ["telnet"]
     ports: ["9090:tcp"]
 
-# anaconda kickstart details
+builder_kickstart_options:
+- lang en_US.UTF-8
+- keyboard us
+- timezone America/Los_Angeles --utc
+- text
+- clearpart --all --initlabel --drives=sda # Clears all partitions on sda and initializes the disk label
+- zerombr # Clear the MBR/GPT on all detected disks
+- part /boot --fstype=ext4 --size=4096 --ondisk=sda # Creates a /boot partition with ext4 filesystem, 4GB size to accomodate multiple kernels
+- part pv.01 --size=1 --grow --ondisk=sda # Create a physical volume for LVM
+- # Setup LVM
+- volgroup vg_system pv.01
+- logvol / --vgname=vg_system --name=lv_root --fstype=xfs --size=20480 
+- logvol /home --vgname=vg_system --name=lv_home --fstype=xfs --size=10240
+- logvol /vms --vgname=vg_system --name=lv_vms --fstype=xfs --size=20480
+- logvol swap --vgname=vg_system --name=lv_swap --recommended
+- '%packages' 
+- '@core' 
+- 'cloud-init'
+- 'cloud-utils-growpart'
+- '%end'
+- reboot --eject
 
 # cloudinit
+hostname: "vpac-redhat"

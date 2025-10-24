@@ -1,0 +1,27 @@
+%pre --log=/var/log/anaconda/pre-install.log --erroronfail
+echo "In pre install stage"
+%end
+
+{% if builder_kickstart_options | length > 0 %}
+{% for option in builder_kickstart_options %}
+{{ option }}
+{% endfor %}
+{% endif %}
+
+%post --log=/var/log/anaconda/post-install.log --erroronfail
+# Make NoCloud datasource directory
+mkdir -p /mnt/sysroot/var/lib/cloud/seed/nocloud/
+
+# Copy cloud-init files from ISO
+cp /run/install/repo/cloud-init/user-data /mnt/sysroot/var/lib/cloud/seed/nocloud/
+cp /run/install/repo/cloud-init/meta-data /mnt/sysroot/var/lib/cloud/seed/nocloud/
+
+# Enable cloud-init services
+chroot /mnt/sysroot systemctl enable cloud-init
+chroot /mnt/sysroot systemctl enable cloud-config
+chroot /mnt/sysroot systemctl enable cloud-final
+
+# workaround for eject media after install (https://access.redhat.com/solutions/5488251)
+/usr/bin/eject -i 0
+/usr/bin/eject -r
+%end
