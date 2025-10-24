@@ -1,0 +1,99 @@
+---
+# This playbook builds ISO with kickstart for unattended 
+# installation of RHEL on Baremetal host for virtualization
+- name: Build ISO
+  hosts: imagebuilder
+  become: yes
+  gather_facts: yes
+  vars_files:
+  - vars/image_definition.yml
+  tasks:
+  - name: Start
+    ansible.builtin.debug:
+      msg: "Starting ISO build"
+  
+  - name: Create blueprint
+    block:
+    - name: create temp file to store blueprint
+      ansible.builtin.tempfile:
+        state: file
+        suffix: toml
+      register: builder_blueprint_file_result
+    - name: set blueprint file in fact
+      ansible.builtin.set_fact:
+        builder_blueprint_file: "{{ builder_blueprint_file_result.path }}"
+    - name: Create blueprint
+      infra.osbuild.create_blueprint:
+        dest: "{{ builder_blueprint_file }}"
+        name: "{{ builder_blueprint_name }}"
+        description: "{{ builder_blueprint_description }}"
+        distro: "{{ builder_blueprint_distro | default(omit) }}"
+        packages: "{{ builder_compose_pkgs | default(omit) }}"
+        customizations: "{{ builder_compose_customizations | default(omit) }}"
+  
+  - name: push the blueprint to imagebuilder
+    infra.osbuild.push_blueprint:
+      src: "{{ builder_blueprint_file }}"
+  
+  - name: Get new blueprint version
+    ansible.builtin.shell: composer-cli --json blueprints show "{{ builder_blueprint_name }}" | jq -r ".[].body.blueprints[].version"
+    register: new_blueprint_version_result
+
+  - name: Setting current blueprint version
+    ansible.builtin.set_fact:
+      blueprint_version: "{{ new_blueprint_version_result.stdout }}"
+
+  - name: Start Compose
+    block:
+    - name: Check whether components listed in blueprint and dependencies are valid
+      ansible.builtin.shell: |
+        composer-cli --json blueprints depsolve {{ builder_blueprint_name }} | jq -r ".[].body.errors | length"
+      register: depsolve_result
+
+    - name: fail when errors
+      assert:
+        that: 
+        - depsolve_result.stdout != 0
+        fail_msg: "Depsolve errors in blueprint"
+    
+    - name: Start compose
+      ansible.builtin.shell: |
+        composer-cli --json compose start {{ builder_blueprint_name }} image-installer | jq -r ".[].body.build_id"
+      register: compose_start_result
+
+    - name: Set job id in fact
+      ansible.builtin.set_fact:
+        job_id: "{{ compose_start_result.stdout }}"
+    
+  - name: wait for compose to finish
+    ansible.builtin.shell: |
+      composer-cli --json compose info {{ job_id }} | jq -r ".[].body.queue_status"
+    until: check_status_result.stdout not in ["RUNNING", "WAITING"]
+    retries: "{{ retries }}"
+    delay: "{{ delay }}"
+    register: check_status_result
+
+  - name: Download Artifact
+    when: check_status_result.stdout == "FINISHED"
+    block:
+    - name: create a temp dir
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: "{{ builder_blueprint_name }}"
+      register: tempdir_result
+
+    - name: set artifact dir
+      ansible.builtin.set_fact:
+        artifact_dir: "{{ tempdir_result.path }}"
+    
+    - name: Download artifact
+      ansible.builtin.shell: |
+        composer-cli compose image {{ job_id }} --filename {{ artifact_dir }}/{{ builder_blueprint_name }}_{{ blueprint_version }}.iso
+
+    - name: Debug
+      ansible.builtin.debug:
+        msg: "Download ISO from {{ artifact_dir }}/{{ builder_blueprint_name }}_{{ blueprint_version }}.iso"
+    
+    - name: Create a custom anaconda kickstart file
+
+    - name: Inject the anaconda kickstart into ISO

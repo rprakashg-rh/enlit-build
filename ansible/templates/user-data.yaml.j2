@@ -1,0 +1,18 @@
+#cloud-config
+users:
+- name: "{{ admin_user }}"
+  ssh_authorized_keys: 
+  - "{{ ssh_key }}"
+  groups: ["wheel"]
+  shell: /bin/bash
+  sudo: ['ALL=(ALL) NOPASSWD:ALL']
+
+runcmd:
+- echo "Welcome to vPAC on RHEL" > /etc/motd
+
+write_files:
+- path:
+  permissions: '0755'
+  owner: 'root:root'
+  content: |
+{{ lookup('file', '{{ ssh_pub_files }}') | indent(4, true) }}

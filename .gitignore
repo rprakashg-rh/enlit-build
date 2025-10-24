@@ -1,0 +1,8 @@
+# Do not checkin ansible vault file
+ansible/vars/secrets.yml
+
+# do not checkin ansible inventory file
+ansible/inventory
+
+
+

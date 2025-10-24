@@ -1,0 +1,29 @@
+---
+retries: 100
+delay: 20
+
+# blueprint details
+builder_blueprint_name: RHEL-9-6-Base
+builder_blueprint_description: "Base RHEL 9.6 for virtualization host"
+builder_blueprint_distro: "rhel-9"
+builder_compose_pkgs:
+- ansible-core
+- firewalld
+- rhel-system-roles
+- cockpit
+- cockpit-machines
+- cockpit-podman
+- cockpit
+- cloud-init
+builder_compose_customizations:
+  services:
+    enabled: ["cockpit.socket", "cloud-init", "firewalld", "podman-auto-update.timer"]
+  firewall:
+    services:
+      enabled: ["http", "https", "ssh", "cockpit"]
+      disabled: ["telnet"]
+    ports: ["9090:tcp"]
+
+# anaconda kickstart details
+
+# cloudinit
