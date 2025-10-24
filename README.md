@@ -42,8 +42,22 @@ Run ansible playbook to setup the imagebuilder server as shown in the command be
 ansible-playbook -i inventory setup-imagebuilder.yml
 ```
 
+Create an ansible vault and add yaml snippet below
+
+```yaml
+admin_user: <specify>
+admin_user_password: <specify>
+admin_user_ssh_key: <specify>
+```
+
+Set vault secret you entered into environment variable like below
+
+```sh
+export VAULT_SECRET=<redacted>
+```
+
 To build ISO run build_iso.yml playbook as shown below
 
 ```sh
-ansible-playbook -i inventory build_iso.yml
+ansible-playbook -i inventory --vault-password-file <(echo "$VAULT_SECRET") build_iso.yml
 ```
