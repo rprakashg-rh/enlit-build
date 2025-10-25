@@ -77,8 +77,13 @@
     delay: "{{ delay }}"
     register: check_status_result
 
+  - name: Make sure compose job successfully completed before proceeding further 
+    ansible.builtin.assert:
+      that: 
+      - check_status_result.stdout == "FINISHED"
+      fail_msg: "Compose failed"
+      
   - name: Download Artifact
-    when: check_status_result.stdout == "FINISHED"
     block:
     - name: Create a temp dir
       ansible.builtin.tempfile:
@@ -141,6 +146,9 @@
     - name: Store the path in fact
       ansible.builtin.set_fact:
         ksfile: "{{ builder_kickstart.path }}"
+    - name: Debug the kickstart file path
+      ansible.builtin.debug:
+        msg: "Kickstart file: {{ ksfile }}"
     - name: Generate kickstart file
       ansible.builtin.template:
         src: "kickstart.ks.j2"
@@ -159,7 +167,12 @@
   - name: Inject the anaconda kickstart and cloud-init files into ISO
     ansible.builtin.command: |
       mkksiso --add {{ cloudinit_files }}/cloud-init --ks {{ ksfile }} {{ artifact_file }} {{ artifact_file_with_ks }}
+    register: mkksiso_result
   
+  - name: Debug mkksiso result
+    ansible.builtin.debug:
+      var: mkksiso_result
+
   - name: Debug artifact with custom ks 
     ansible.builtin.debug:
       msg: "Download ISO with custom kickstart from: {{ artifact_file_with_ks }}"

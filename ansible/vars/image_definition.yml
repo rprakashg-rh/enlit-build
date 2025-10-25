@@ -28,9 +28,12 @@ builder_kickstart_options:
 - keyboard us
 - timezone America/Los_Angeles --utc
 - text
-- clearpart --all --initlabel # Clears all partitions on sda and initializes the disk label
+- liveimg --url file:///run/install/repo/liveimg.tar.gz
 - zerombr # Clear the MBR/GPT on all detected disks
-- part /boot --fstype=ext4 --size=4096 --ondisk=sda # Creates a /boot partition with ext4 filesystem, 4GB size to accomodate multiple kernels
+- bootloader --location=mbr
+- clearpart --all --initlabel # Clears all partitions on sda and initializes the disk label
+- part /boot --fstype=ext4 --size=4096 # Creates a /boot partition with ext4 filesystem, 4GB size to accomodate multiple kernels
+- part /boot/efi --fstype=efi --size=600
 - part pv.01 --size=1 --grow # Create a physical volume for LVM
 - # Setup LVM
 - volgroup vg_system pv.01
