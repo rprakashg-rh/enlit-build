@@ -8,6 +8,9 @@ echo "In pre install stage"
 {% endfor %}
 {% endif %}
 
+# setting root password
+rootpw --iscrypted {{ root_password | password_hash('sha512')}}
+
 %post --log=/var/log/anaconda/post-install.log --erroronfail
 # Make NoCloud datasource directory
 mkdir -p /mnt/sysroot/var/lib/cloud/seed/nocloud/

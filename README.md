@@ -45,6 +45,7 @@ ansible-playbook -i inventory setup-imagebuilder.yml
 Create an ansible vault and add yaml snippet below
 
 ```yaml
+root_password: <specify>
 admin_user: <specify>
 admin_user_password: <specify>
 admin_user_ssh_key: <specify>
