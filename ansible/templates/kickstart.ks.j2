@@ -13,15 +13,12 @@ echo "In pre install stage"
 mkdir -p /mnt/sysroot/var/lib/cloud/seed/nocloud/
 
 # Copy cloud-init files from ISO
-cp /run/install/repo/cloud-init/user-data /mnt/sysroot/var/lib/cloud/seed/nocloud/
-cp /run/install/repo/cloud-init/meta-data /mnt/sysroot/var/lib/cloud/seed/nocloud/
+cp cloud-init/user-data /mnt/sysroot/var/lib/cloud/seed/nocloud/
+cp cloud-init/meta-data /mnt/sysroot/var/lib/cloud/seed/nocloud/
 
 # Enable cloud-init services
-chroot /mnt/sysroot systemctl enable cloud-init
-chroot /mnt/sysroot systemctl enable cloud-config
-chroot /mnt/sysroot systemctl enable cloud-final
+systemctl enable cloud-init
 
-# workaround for eject media after install (https://access.redhat.com/solutions/5488251)
-/usr/bin/eject -i 0
-/usr/bin/eject -r
+echo "anaconda post install steps completed successfully"
+
 %end
