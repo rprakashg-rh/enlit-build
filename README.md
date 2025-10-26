@@ -62,3 +62,15 @@ To build ISO run build_iso.yml playbook as shown below
 ```sh
 ansible-playbook -i inventory --vault-password-file <(echo "$VAULT_SECRET") build_iso.yml
 ```
+
+## Installing ABB SSC600 SW
+
+### Hardware configuration
+Disable hyper-threading (simultaneous multi-threading/logical processors) and turbo boost. Also enable virtualization support (VMX/VT-X for Intel platforms) in the UEFI (or BIOS) settings. 
+Make sure that the power saving features of the host are disabled. See the hardware vendor documentation for detailed information.
+
+#### Disable Hyper-Threading and turbo boost on Advantech ECU579
+
+#### Enable virtualization support 
+
+#### Disable power saving features
