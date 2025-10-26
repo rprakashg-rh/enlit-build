@@ -14,6 +14,8 @@ builder_compose_pkgs:
 - cockpit-machines
 - cockpit-podman
 - cockpit
+- cloud-init
+- cloud-utils-growpart
 builder_compose_customizations:
   services:
     enabled: ["cockpit.socket", "firewalld"]
@@ -23,12 +25,14 @@ builder_compose_customizations:
       disabled: ["telnet"]
     ports: ["9090:tcp"]
 
+# Kickstart customizations
 builder_kickstart_options:
 - lang en_US.UTF-8
 - keyboard us
 - timezone America/Los_Angeles --utc
 - text
 - liveimg --url file:///run/install/repo/liveimg.tar.gz
+- firstboot --disable #disable firstboot
 - zerombr # Clear the MBR/GPT on all detected disks
 - bootloader --location=mbr
 - clearpart --all --initlabel # Clears all partitions on sda and initializes the disk label

@@ -11,4 +11,5 @@ users:
   sudo: ['ALL=(ALL) NOPASSWD:ALL']
 
 runcmd:
+- echo "Cloud-Init completed successfully" > /var/log/cloud-init-success.log
 - echo "Welcome to vPAC on RHEL" > /etc/motd

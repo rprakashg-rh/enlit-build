@@ -11,20 +11,13 @@ echo "In pre install stage"
 # setting root password
 rootpw --iscrypted {{ root_password | password_hash('sha512')}}
 
-# Install cloud-init packages
-%packages
-@core 
-cloud-init
-cloud-utils-growpart
-%end
-
 %post --log=/var/log/anaconda/post-install.log --erroronfail
 # Make NoCloud datasource directory
 mkdir -p /mnt/sysroot/var/lib/cloud/seed/nocloud/
 
 # Copy cloud-init files from ISO
-cp /cloud-init/user-data /mnt/sysroot/var/lib/cloud/seed/nocloud/
-cp /cloud-init/meta-data /mnt/sysroot/var/lib/cloud/seed/nocloud/
+cp file:///run/install/repo/user-data /mnt/sysroot/var/lib/cloud/seed/nocloud/
+cp file:///run/install/repo/meta-data /mnt/sysroot/var/lib/cloud/seed/nocloud/
 
 # Enable cloud-init services
 systemctl enable cloud-init
