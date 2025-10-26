@@ -57,14 +57,23 @@ Set vault secret you entered into environment variable like below
 export VAULT_SECRET=<redacted>
 ```
 
-To build ISO run build_iso.yml playbook as shown below
+To build ISO run build_iso.yml playbook as shown below 
 
 ```sh
 ansible-playbook -i inventory --vault-password-file <(echo "$VAULT_SECRET") build_iso.yml
 ```
+Above playbook will create an RHEL 9.6 ISO with a custom kickstart that performs a fully automated and unattended install. Download this ISO from the imagebuilder host using SCP as shown below
 
-## Installing ABB SSC600 SW
+```sh
+scp -i ~/.ssh/ec2.pub <IP of imagebuilder>:<iso path> .
+```
 
+## Installing RHEL 9.6 on ECU579
+To install RHEL 9.6 on ECU579, access the IPMI web interface to remotely install.
+
+## Configuring the Host to run SSC600 SW (Centralized Protection and Control, CPC) virtualized
+
+TODO:
 ### Hardware configuration
 Disable hyper-threading (simultaneous multi-threading/logical processors) and turbo boost. Also enable virtualization support (VMX/VT-X for Intel platforms) in the UEFI (or BIOS) settings. 
 Make sure that the power saving features of the host are disabled. See the hardware vendor documentation for detailed information.
@@ -74,3 +83,15 @@ Make sure that the power saving features of the host are disabled. See the hardw
 #### Enable virtualization support 
 
 #### Disable power saving features
+
+
+## Configuring networking
+TODO:
+
+## Installing ABB SSC600 SW
+TODO:
+
+
+## Install and Configure Windows 11 Professional VM with required software
+TODO:
+

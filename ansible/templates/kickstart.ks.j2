@@ -16,8 +16,8 @@ rootpw --iscrypted {{ root_password | password_hash('sha512')}}
 mkdir -p /mnt/sysroot/var/lib/cloud/seed/nocloud/
 
 # Copy cloud-init files from ISO
-cp file:///run/install/repo/user-data /mnt/sysroot/var/lib/cloud/seed/nocloud/
-cp file:///run/install/repo/meta-data /mnt/sysroot/var/lib/cloud/seed/nocloud/
+cp /mnt/install/source/user-data /mnt/sysroot/var/lib/cloud/seed/nocloud/
+cp /mnt/install/source/meta-data /mnt/sysroot/var/lib/cloud/seed/nocloud/
 
 # Enable cloud-init services
 systemctl enable cloud-init
