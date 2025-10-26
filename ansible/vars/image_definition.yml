@@ -42,11 +42,6 @@ builder_kickstart_options:
 - logvol /vms --vgname=vg_system --name=lv_vms --fstype=xfs --size=20480
 - logvol swap --vgname=vg_system --name=lv_swap --recommended
 - network --bootproto=dhcp --activate #auto detect network
-- '%packages' 
-- '@core' 
-- 'cloud-init'
-- 'cloud-utils-growpart'
-- '%end'
 - reboot --eject
 
 # cloudinit
