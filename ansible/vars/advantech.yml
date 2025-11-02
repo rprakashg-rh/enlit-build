@@ -21,14 +21,18 @@ builder_compose_pkgs:
 - bzip2
 - zstd
 - mkisofs
+- qemu-kvm
+- libvirt
+- virt-install
+- virt-viewer
 builder_compose_customizations:
   services:
-    enabled: ["cockpit.socket", "firewalld"]
+    enabled: ["cockpit.socket", "firewalld", "libvirtd"]
   firewall:
     services:
       enabled: ["http", "https", "ssh", "cockpit"]
       disabled: ["telnet"]
-    ports: ["9090:tcp"]
+    ports: ["9090:tcp", "22:tcp"]
 
 # Kickstart customizations
 builder_kickstart_options:

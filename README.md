@@ -63,31 +63,12 @@ To build ISO for automated install on Advantech ECU579 run build_iso.yml playboo
 ansible-playbook -i inventory --vault-password-file <(echo "$VAULT_SECRET") build_iso.yml -e @vars/advantech.yml
 ```
 
-
 In the ansible automation for building a custom image we first create a image builder blueprint using the image definition file we specifically defined for installation on Advantech ECU579 hardware. Image Builder blueprint is created and pushed to image builder using helpful modules in [infra.osbuild](https://github.com/redhat-cop/infra.osbuild) ansible collection. We also use composer-cli start compose command to build a custom ISO using the blueprint. Automation will wait for the compose job to complete successfully and creates a custom kickstart file using the kickstart options defined in ansible vars [file](./ansible/vars/advantech.yml). Custom kickstart file is created and validated using the helpful modules from [infra.osbuild](https://github.com/redhat-cop/infra.osbuild) ansible collect. Automation also will generate [cloud-init](https://cloud-init.io) files for initializing the system during provisioning. In this case generate an Admin user and inject some message into `/etc/motd` file. Custom kickstart and cloud-int files are injected into the ISO created earlier using the image builder tooling. Ideally we want to create a seperate ISO that would have the cloud-init seed files and during install mount that ISO and in kickstart post install we can grab the files from the ISO mount directory and copy into provisioned system. This way same custom ISO can be used to provision another system with different set of credentials, we would simply need to generate a seperate cloud-init seed iso in some automation and use that during installation.
-
 
 Above ansible playbook will create a custom RHEL 9.6 ISO with a custom kickstart that performs a fully automated and unattended install. Download this ISO from the imagebuilder host using SCP as shown below
 
 ```sh
 scp -i <your ssh pub key> <IP of imagebuilder>:<iso path> .
-```
-
-## Install RHEL 9.6 on ECU579 using the custom ISO built earlier remotely using IPMI interface of the virtualization host
-To install RHEL 9.6 on ECU579, access the IPMI web interface to remotely install using the ISO we built earlier. If you have not installed RHEL on ECU579 using the IPMI web interface I suggest you read [this](https://rprakashg.github.io/installing-rhel-using-ipmi/) blog post
-
-
-## Update your inventory file with the information about the new RHEL host 
-Update the inventory file and include information about the new virtualization host we provisioned on Advantech ECU579
-
-Add snippet below under `hosts` section and replace as necessary
-
-```yaml
-virtualization_hosts:
-  ansible_host: "<replace>"
-  ansible_port: 22
-  ansible_user: "admin"
-  ansible_ssh_private_key_file: "<replace>"
 ```
 
 ## Configuring the Host to run SSC600 SW (Centralized Protection and Control, CPC) virtualized
@@ -106,7 +87,7 @@ Make sure that the power saving features of the host are disabled. See the hardw
 
 Steps described below are for Advantech ECU579. If you are using a different hardware please consult the hardware vendors documentation as mentioned above. Additionally these are currently set manually with no automation. Hopefully we can automate all these steps using supported ansible collections from the hardware partners.
 
-#### Disable Turbo boost
+### Disable Turbo boost
 Follow steps below to disable turbo boost. Power on the host and hit `Esc` to enter bios. Once in bios navigate to
 `Socket Configuration` -> `Advanced Power Management` Configuration as shown in screen capture below
 
@@ -120,7 +101,7 @@ This should bring up options you can configure for `CPU P State control` as show
 
 ![disable-turbo](./images/disable-turbo-boost.jpg)
 
-#### Disable Hyper-Threading
+### Disable Hyper-Threading
 Follow steps below to disable hyper threading. Navigate to `Socket Configuration` -> `Processor Configuration` from the bios menu as shown in screen capture below
 
 ![proc-config](./images/proc-config.jpg)
@@ -129,7 +110,7 @@ This should bring up `Processor Configuration` options you can set in bios as sh
 
 ![disable-ht](./images/disable-hyperthreading.jpg)
 
-#### Enable virtualization support 
+### Enable virtualization support 
 Follow steps below to enable virtualization support. Navigate to `Socket Configuration` -> `IIO Configuration` as shown in the screen capture below
 
 ![iio-config](./images/iio-config.jpg)
@@ -142,7 +123,7 @@ This should bring up options you can set and select `Intel VT for Directed I/O (
 
 ![enable-virt](./images/enable-virt.jpg)
 
-#### Disable power saving features
+### Disable power saving features
 Follow steps below to disable power saving features. In bios navigate to `Socket Configuration` -> `Advanced Power Management Configuration` as shown in screen capture below
 
 ![apm-config](./images/apm-config.jpg)
@@ -156,6 +137,23 @@ This should bring up all the `CPU C State` options you can set. Disable all as s
 ![disable-power-management](./images/disable-powermanagement.jpg)
 
 This completes all the bios configurations we need to make and we can save and exit from bios.
+
+## Install RHEL 9.6 on ECU579 using the custom ISO built earlier remotely using IPMI interface of the virtualization host
+To install RHEL 9.6 on ECU579, access the IPMI web interface to remotely install using the ISO we built earlier. If you have not installed RHEL on ECU579 using the IPMI web interface I suggest you read [this](https://rprakashg.github.io/installing-rhel-using-ipmi/) blog post
+
+
+## Update your inventory file with the information about the new RHEL host 
+Update the inventory file and include information about the new virtualization host we provisioned on Advantech ECU579
+
+Add snippet below under `hosts` section and replace as necessary
+
+```yaml
+virtualization_hosts:
+  ansible_host: "<replace>"
+  ansible_port: 22
+  ansible_user: "admin"
+  ansible_ssh_private_key_file: "<replace>"
+```
 
 ## Configuring networking
 TODO:
