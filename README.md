@@ -60,7 +60,7 @@ export VAULT_SECRET=<redacted>
 To build ISO for automated install on Advantech ECU579 run build_iso.yml playbook as shown below 
 
 ```sh
-ansible-playbook -i inventory --vault-password-file <(echo "$VAULT_SECRET") build_iso.yml -e vars/advantech.yml
+ansible-playbook -i inventory --vault-password-file <(echo "$VAULT_SECRET") build_iso.yml -e @vars/advantech.yml
 ```
 Above playbook will create an RHEL 9.6 ISO with a custom kickstart that performs a fully automated and unattended install. Download this ISO from the imagebuilder host using SCP as shown below
 
@@ -69,7 +69,7 @@ scp -i ~/.ssh/ec2.pub <IP of imagebuilder>:<iso path> .
 ```
 
 ## Install RHEL 9.6 on ECU579 using the custom ISO built earlier remotely using IPMI interface of the virtualization host
-To install RHEL 9.6 on ECU579, access the IPMI web interface to remotely install using the ISO we built earlier. If you have not installed RHEL on ECU579 using the IPMI web interface I suggest you read [this](https://rprakashg.github.io/) blog post
+To install RHEL 9.6 on ECU579, access the IPMI web interface to remotely install using the ISO we built earlier. If you have not installed RHEL on ECU579 using the IPMI web interface I suggest you read [this](https://rprakashg.github.io/installing-rhel-using-ipmi/) blog post
 
 
 ## Update your inventory file with the information about the new RHEL host 
