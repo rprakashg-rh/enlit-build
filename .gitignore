@@ -4,5 +4,7 @@ ansible/vars/secrets.yml
 # do not checkin ansible inventory file
 ansible/inventory
 
+# Ignore ansible cfg file
+ansible/ansible.cfg
 
 

@@ -3,7 +3,7 @@
   hosts: all
   become: true
   tasks:
-    - name: Run the role
+    - name: Run the osbuild setup_server role to configure imagebuilder host
       ansible.builtin.import_role:
         name: infra.osbuild.setup_server
         

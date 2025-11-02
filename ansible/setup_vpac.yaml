@@ -1,0 +1,15 @@
+---
+- name: Ansible playbook that automates setup of a vpac system
+  hosts: virtualization_hosts
+  gather_facts: yes
+
+  tasks:
+  - name: Configuring bootloader
+    ansible.builtin.import_role:
+      name: redhat.rhel-system-roles.bootloader
+  - name: Configuring kernel settings
+    ansible.builtin.import_role:
+      name: redhat.rhel-system-roles.kernel_settings
+  - name: Configuring timesync
+    anasible.builtin.import_role:
+      name: redhat.rhel-system-roles.timesync

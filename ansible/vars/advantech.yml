@@ -8,6 +8,7 @@ builder_blueprint_description: "Base RHEL 9.6 for virtualization host"
 builder_blueprint_distro: "rhel-9"
 builder_compose_pkgs:
 - ansible-core
+- wget
 - firewalld
 - rhel-system-roles
 - cockpit
@@ -16,6 +17,10 @@ builder_compose_pkgs:
 - cockpit
 - cloud-init
 - cloud-utils-growpart
+- unzip
+- bzip2
+- zstd
+- mkisofs
 builder_compose_customizations:
   services:
     enabled: ["cockpit.socket", "firewalld"]
@@ -41,9 +46,9 @@ builder_kickstart_options:
 - part pv.01 --size=1 --grow # Create a physical volume for LVM
 - # Setup LVM
 - volgroup vg_system pv.01
-- logvol / --vgname=vg_system --name=lv_root --fstype=xfs --size=20480 
-- logvol /home --vgname=vg_system --name=lv_home --fstype=xfs --size=10240
-- logvol /vms --vgname=vg_system --name=lv_vms --fstype=xfs --size=20480
+- logvol / --vgname=vg_system --name=lv_root --fstype=xfs --size=100000
+- logvol /home --vgname=vg_system --name=lv_home --fstype=xfs --size=100000
+- logvol /vms --vgname=vg_system --name=lv_vms --fstype=xfs --size=500000
 - logvol swap --vgname=vg_system --name=lv_swap --recommended
 - network --bootproto=dhcp --activate #auto detect network
 - reboot --eject

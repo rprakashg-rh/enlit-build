@@ -5,8 +5,7 @@
   hosts: imagebuilder
   become: yes
   gather_facts: yes
-  vars_files:
-  - vars/image_definition.yml
+
   tasks:
   - name: Start
     ansible.builtin.debug:

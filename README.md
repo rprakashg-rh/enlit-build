@@ -57,10 +57,10 @@ Set vault secret you entered into environment variable like below
 export VAULT_SECRET=<redacted>
 ```
 
-To build ISO run build_iso.yml playbook as shown below 
+To build ISO for automated install on Advantech ECU579 run build_iso.yml playbook as shown below 
 
 ```sh
-ansible-playbook -i inventory --vault-password-file <(echo "$VAULT_SECRET") build_iso.yml
+ansible-playbook -i inventory --vault-password-file <(echo "$VAULT_SECRET") build_iso.yml -e vars/advantech.yml
 ```
 Above playbook will create an RHEL 9.6 ISO with a custom kickstart that performs a fully automated and unattended install. Download this ISO from the imagebuilder host using SCP as shown below
 
@@ -68,22 +68,87 @@ Above playbook will create an RHEL 9.6 ISO with a custom kickstart that performs
 scp -i ~/.ssh/ec2.pub <IP of imagebuilder>:<iso path> .
 ```
 
-## Installing RHEL 9.6 on ECU579
-To install RHEL 9.6 on ECU579, access the IPMI web interface to remotely install.
+## Install RHEL 9.6 on ECU579 using the custom ISO built earlier remotely using IPMI interface of the virtualization host
+To install RHEL 9.6 on ECU579, access the IPMI web interface to remotely install using the ISO we built earlier. If you have not installed RHEL on ECU579 using the IPMI web interface I suggest you read [this](https://rprakashg.github.io/) blog post
+
+
+## Update your inventory file with the information about the new RHEL host 
+Update the inventory file and include information about the new virtualization host we provisioned on Advantech ECU579
+
+Add snippet below under `hosts` section and replace as necessary
+
+```yaml
+virtualization_hosts:
+  ansible_host: "<replace>"
+  ansible_port: 22
+  ansible_user: "admin"
+  ansible_ssh_private_key_file: "<replace>"
+```
 
 ## Configuring the Host to run SSC600 SW (Centralized Protection and Control, CPC) virtualized
+In this section we will cover how to configure the virtualization host for running SSC600 SW and deploy and instance of SSC600 SW virtual
+machine on KVM
 
-TODO:
-### Hardware configuration
+Ansible Collections to be installed
+
+```sh
+ansible-galaxy collection install git+https://github.com/rprakashg/vpac.git,main
+```
+
+### BIOS configurations that need to be set
 Disable hyper-threading (simultaneous multi-threading/logical processors) and turbo boost. Also enable virtualization support (VMX/VT-X for Intel platforms) in the UEFI (or BIOS) settings. 
 Make sure that the power saving features of the host are disabled. See the hardware vendor documentation for detailed information.
 
-#### Disable Hyper-Threading and turbo boost on Advantech ECU579
+#### Disable Turbo boost
+Follow steps below to disable turbo boost. Power on the host and hit `Esc` to enter bios. Once in bios navigate to
+`Socket Configuration` -> `Advanced Power Management` Configuration as shown in screen capture below
+
+![apm-config](./images/apm-config.jpg)
+
+This should bring up Advanced power management configuration options. Select `CPU P State control` as shown in screen capture below
+
+![cpu-pstate](./images/cpu-pstate.jpg)
+
+This should bring up options you can configure for `CPU P State control` as shown in screen capture below. Select `Energy Efficient Turbo` option and hit enter to to disable
+
+![disable-turbo](./images/disable-turbo-boost.jpg)
+
+#### Disable Hyper-Threading
+Follow steps below to disable hyper threading. Navigate to `Socket Configuration` -> `Processor Configuration` from the bios menu as shown in screen capture below
+
+![proc-config](./images/proc-config.jpg)
+
+This should bring up `Processor Configuration` options you can set in bios as shown in screen capture below. Select `Hyper-Threading [ALL]` and hit enter to disable it.
+
+![disable-ht](./images/disable-hyperthreading.jpg)
 
 #### Enable virtualization support 
+Follow steps below to enable virtualization support. Navigate to `Socket Configuration` -> `IIO Configuration` as shown in the screen capture below
+
+![iio-config](./images/iio-config.jpg)
+
+This should bring up `IIO Configuration` options you can set in bios as shown in screen capture below. Select `Intel VT for Directed I/O (VT=d)` and hit enter
+
+![intelvt](./images/intel-vt.jpg)
+
+This should bring up options you can set and select `Intel VT for Directed I/O (VT=d)` option and hit enter to enable it as shown in screen capture below
+
+![enable-virt](./images/enable-virt.jpg)
 
 #### Disable power saving features
+Follow steps below to disable power saving features. In bios navigate to `Socket Configuration` -> `Advanced Power Management Configuration` as shown in screen capture below
 
+![apm-config](./images/apm-config.jpg)
+
+This should bring up `Advanced Power Management Configuration` options you can set, select `CPU C State Control` and hit enter as shown in screen capture below
+
+![cpu-cstate](./images/cpu-cstate.jpg)
+
+This should bring up all the `CPU C State` options you can set. Disable all as shown in screen capture below
+
+![disable-power-management](./images/disable-powermanagement.jpg)
+
+This completes all the bios configurations we need to make and we can save and exit from bios.
 
 ## Configuring networking
 TODO:
