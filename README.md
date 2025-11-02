@@ -67,10 +67,10 @@ ansible-playbook -i inventory --vault-password-file <(echo "$VAULT_SECRET") buil
 In the ansible automation for building a custom image we first create a image builder blueprint using the image definition file we specifically defined for installation on Advantech ECU579 hardware. Image Builder blueprint is created and pushed to image builder using helpful modules in [infra.osbuild](https://github.com/redhat-cop/infra.osbuild) ansible collection. We also use composer-cli start compose command to build a custom ISO using the blueprint. Automation will wait for the compose job to complete successfully and creates a custom kickstart file using the kickstart options defined in ansible vars [file](./ansible/vars/advantech.yml). Custom kickstart file is created and validated using the helpful modules from [infra.osbuild](https://github.com/redhat-cop/infra.osbuild) ansible collect. Automation also will generate [cloud-init](https://cloud-init.io) files for initializing the system during provisioning. In this case generate an Admin user and inject some message into `/etc/motd` file. Custom kickstart and cloud-int files are injected into the ISO created earlier using the image builder tooling. Ideally we want to create a seperate ISO that would have the cloud-init seed files and during install mount that ISO and in kickstart post install we can grab the files from the ISO mount directory and copy into provisioned system. This way same custom ISO can be used to provision another system with different set of credentials, we would simply need to generate a seperate cloud-init seed iso in some automation and use that during installation.
 
 
-Above playbook will create an RHEL 9.6 ISO with a custom kickstart that performs a fully automated and unattended install. Download this ISO from the imagebuilder host using SCP as shown below
+Above ansible playbook will create a custom RHEL 9.6 ISO with a custom kickstart that performs a fully automated and unattended install. Download this ISO from the imagebuilder host using SCP as shown below
 
 ```sh
-scp -i ~/.ssh/ec2.pub <IP of imagebuilder>:<iso path> .
+scp -i <your ssh pub key> <IP of imagebuilder>:<iso path> .
 ```
 
 ## Install RHEL 9.6 on ECU579 using the custom ISO built earlier remotely using IPMI interface of the virtualization host
