@@ -104,6 +104,8 @@ ansible-galaxy collection install git+https://github.com/rprakashg/vpac.git,main
 Disable hyper-threading (simultaneous multi-threading/logical processors) and turbo boost. Also enable virtualization support (VMX/VT-X for Intel platforms) in the UEFI (or BIOS) settings. 
 Make sure that the power saving features of the host are disabled. See the hardware vendor documentation for detailed information.
 
+Steps described below are for Advantech ECU579. If you are using a different hardware please consult the hardware vendors documentation as mentioned above. Additionally these are currently set manually with no automation. Hopefully we can automate all these steps using supported ansible collections from the hardware partners.
+
 #### Disable Turbo boost
 Follow steps below to disable turbo boost. Power on the host and hit `Esc` to enter bios. Once in bios navigate to
 `Socket Configuration` -> `Advanced Power Management` Configuration as shown in screen capture below
