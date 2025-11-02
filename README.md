@@ -63,7 +63,16 @@ To build ISO for automated install on Advantech ECU579 run build_iso.yml playboo
 ansible-playbook -i inventory --vault-password-file <(echo "$VAULT_SECRET") build_iso.yml -e @vars/advantech.yml
 ```
 
-In the ansible automation for building a custom image we first create a image builder blueprint using the image definition file we specifically defined for installation on Advantech ECU579 hardware. Image Builder blueprint is created and pushed to image builder using helpful modules in [infra.osbuild](https://github.com/redhat-cop/infra.osbuild) ansible collection. We also use composer-cli start compose command to build a custom ISO using the blueprint. Automation will wait for the compose job to complete successfully and creates a custom kickstart file using the kickstart options defined in ansible vars [file](./ansible/vars/advantech.yml). Custom kickstart file is created and validated using the helpful modules from [infra.osbuild](https://github.com/redhat-cop/infra.osbuild) ansible collect. Automation also will generate [cloud-init](https://cloud-init.io) files for initializing the system during provisioning. In this case generate an Admin user and inject some message into `/etc/motd` file. Custom kickstart and cloud-int files are injected into the ISO created earlier using the image builder tooling. Ideally we want to create a seperate ISO that would have the cloud-init seed files and during install mount that ISO and in kickstart post install we can grab the files from the ISO mount directory and copy into provisioned system. This way same custom ISO can be used to provision another system with different set of credentials, we would simply need to generate a seperate cloud-init seed iso in some automation and use that during installation.
+In the Ansible automation for building a custom image, we first create an Image Builder blueprint using the image definition file specifically tailored for installation on Advantech ECU579 hardware. The blueprint is created and uploaded to Image Builder using modules provided by the infra.osbuild
+ Ansible collection.
+
+Next, we trigger the image build process by running the composer-cli start compose command, which generates a custom ISO from the blueprint. The automation waits for the compose job to finish successfully, then creates a custom Kickstart file based on the Kickstart options defined in the Ansible variables file
+. Before the Kickstart file is injected into the ISO, it is validated using the same helpful modules from the infra.osbuild collection.
+
+The automation also generates cloud-init
+ configuration files to initialize the system during provisioning. In this setup, cloud-init is used to create an admin user with an SSH key and to add a custom message to the /etc/motd file. Both the Kickstart and cloud-init files are then injected into the previously created ISO using the mkksiso tool.
+
+Ideally, we aim to create a separate ISO that contains only the cloud-init seed files. During installation, this ISO can be mounted, and the Kickstart post-install script can copy the files from the mount directory into the provisioned system. This approach allows the same custom ISO to be reused across multiple systems with different credentials—by simply generating a new cloud-init seed ISO through automation and using it during installation.
 
 Above ansible playbook will create a custom RHEL 9.6 ISO with a custom kickstart that performs a fully automated and unattended install. Download this ISO from the imagebuilder host using SCP as shown below
 
