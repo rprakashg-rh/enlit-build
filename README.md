@@ -164,13 +164,20 @@ virtualization_hosts:
   ansible_ssh_private_key_file: "<replace>"
 ```
 
-## Configuring networking
-TODO:
+## Configuring the host for deploying and running realtime workloads
+Steps to prepare and configure the host for running realtime workload like ABB SSC600SW is automation using ansible. Execute the ansible playbook
 
-## Installing ABB SSC600 SW
-TODO:
+```sh
+ansible-playbook -i inventory configure_system.yml -e @vars/enlit.yml
+```
+
+## Deploying an instance of SSC600 SW virtual machine on RHEL KVM
 
 
-## Install and Configure Windows 11 Professional VM with required software
-TODO:
+```sh
+ansible-playbook -i inventory deploy_ssc600_vm.yml -e @vars/vcpc1a.yml
+```
+
+## Install and Configure Windows HMI
+
 

@@ -1,0 +1,13 @@
+---
+- name: Ansible playbook that configures virtualization hosts to deploy SSC600 SW
+  hosts: virtualization_hosts
+  gather_facts: yes
+
+  tasks:
+  - name: Configure the system for running realtime workloads
+    ansible.builtin.import_role:
+      name: rprakashg.vpac.prepare_system_for_rt
+  - name: Configure system for deploying SSC600 SW
+    ansible.builtin.import_role:
+      name: rprakashg.vpac.prepare_system_for_ssc600sw
+  

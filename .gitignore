@@ -7,4 +7,6 @@ ansible/inventory
 # Ignore ansible cfg file
 ansible/ansible.cfg
 
+# Ignore windows 11 iso
+ansible/iso/*.iso
 

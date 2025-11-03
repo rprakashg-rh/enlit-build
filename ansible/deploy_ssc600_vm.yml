@@ -1,0 +1,9 @@
+---
+- name: Automates deployment of SSC600SW virtual machine on KVM hypervisor
+  hosts: virtualization_hosts
+  gather_facts: yes
+
+  tasks:
+  - name: Deploy VM
+    ansible.builtin.import_role:
+      name: rprakashg.vpac.deploy_ssc600sw
