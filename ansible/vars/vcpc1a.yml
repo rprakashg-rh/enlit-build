@@ -8,7 +8,7 @@ ssc600_vm:
   core_qemu: 16-17
   pb_nic: "ens3f0"
 
-ptp:
+ssc600_ptp:
   status_dir: /home/libvirt-local/ptp/
 
 ssc600_bundle:

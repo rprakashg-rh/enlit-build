@@ -1,0 +1,15 @@
+- name: Justing running PTP config
+  hosts: virtualization_hosts
+  gather_facts: yes
+  become: yes
+  tasks:
+  - name: Configure timesync
+    ansible.builtin.import_role:
+      name: linux-system-roles.timesync
+    vars:
+      timesync_ntp_providers: chrony
+      timesync_ptp_domains:
+      - number: 0
+        interfaces:
+        - "ens3f0"
+        transport: L2

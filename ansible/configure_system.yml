@@ -4,9 +4,16 @@
   gather_facts: yes
 
   tasks:
+  - name: Load ansible vault
+    ansible.builtin.include_vars:
+      file: "./vars/secrets.yml"
+
   - name: Configure the system for running realtime workloads
     ansible.builtin.import_role:
       name: rprakashg.vpac.prepare_system_for_rt
+    vars:
+      processbus_nic: "{{ networking.processbus.nic }}"
+      
   - name: Configure system for deploying SSC600 SW
     ansible.builtin.import_role:
       name: rprakashg.vpac.prepare_system_for_ssc600sw
