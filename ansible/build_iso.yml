@@ -14,7 +14,7 @@
   - name: Load secrets from ansible vault
     ansible.builtin.include_vars:
       file: "./vars/secrets.yml"
-
+  
   - name: Create blueprint
     block:
     - name: create temp file to store blueprint

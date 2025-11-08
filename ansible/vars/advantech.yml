@@ -25,9 +25,18 @@ builder_compose_pkgs:
 - libvirt
 - virt-install
 - virt-viewer
+- swtpm-tools
+- dosfstools
+- edk2-ovmf #uefi firmware for windows 11 install
+#- kernel-rt
+#- kernel-rt-kvm
+#- tuned-profiles-nfv-host
+#- realtime-tests
+- dnf-plugins-core
+- python3-dnf-plugin-versionlock #versionlock 
 builder_compose_customizations:
   services:
-    enabled: ["cockpit.socket", "firewalld", "libvirtd"]
+    enabled: ["cockpit.socket", "firewalld"]
   firewall:
     services:
       enabled: ["http", "https", "ssh", "cockpit"]
@@ -50,8 +59,8 @@ builder_kickstart_options:
 - part pv.01 --size=1 --grow # Create a physical volume for LVM
 - # Setup LVM
 - volgroup vg_system pv.01
-- logvol / --vgname=vg_system --name=lv_root --fstype=xfs --size=100000
-- logvol /home --vgname=vg_system --name=lv_home --fstype=xfs --size=100000
+- logvol / --vgname=vg_system --name=lv_root --fstype=xfs --size=150000
+- logvol /home --vgname=vg_system --name=lv_home --fstype=xfs --size=200000
 - logvol /vms --vgname=vg_system --name=lv_vms --fstype=xfs --size=500000
 - logvol swap --vgname=vg_system --name=lv_swap --recommended
 - network --bootproto=dhcp --activate #auto detect network

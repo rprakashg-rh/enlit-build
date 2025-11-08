@@ -1,6 +1,24 @@
 # Enlit 2025 build
 This repo contains all artifacts used for build of enlit 2025 demos
 
+## Configuring network switches
+
+### Connecting to the management interface via browser
+
+### Changing default password
+In keeping with good management and security practices, it is recommended that
+you change the default password as soon as the device is functioning and setup
+correctly. The following details the necessary steps to change the default password.
+To change the password:
+1. Navigate to Configuration > Security > Switch > Users.
+2. From the User Configuration table, click the Admin (default) account to select it.
+3. The Edit User screen displays, click the Change Password drop-down menu
+and select Yes.
+4. In the Password field (maximum length: 32 characters), type in the new pass-
+word. Re-type the same password in the Password (again) field.
+5. Click Save to change the current account settings. Alternatively, click Reset or
+Cancel.
+
 ## Building the ISO file for unattended installation of RHEL 9.6 on virtualization host
 
 Request an AWS Open environment from demo.redhat.com and create an EC2 instance using the RHEL 9 AMI provided by Red Hat from the AWS console. We are going to use this host as image builder to build a custom ISO we can use to do unattended install of RHEL 9. Verify that host is up and running and that you can SSH into it.
@@ -168,7 +186,7 @@ virtualization_hosts:
 Steps to prepare and configure the host for running realtime workload like ABB SSC600SW is automation using ansible. Execute the ansible playbook
 
 ```sh
-ansible-playbook -i inventory configure_system.yml -e @vars/enlit.yml
+ansible-playbook -i inventory --vault-password-file <(echo "$VAULT_SECRET") configure_system.yml -e @vars/enlit.yml
 ```
 
 ## Deploying an instance of SSC600 SW virtual machine on RHEL KVM

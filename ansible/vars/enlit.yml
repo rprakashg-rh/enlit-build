@@ -1,8 +1,3 @@
-profile: realtime-virtual-host
-
-tuned:
-  rt_cores: 11-21
-
 rt_config:
   non_rt_cores_cat: f
   non_rt_cache_cat: "0x600"
@@ -10,19 +5,18 @@ rt_config:
   rt_cores: 12-15
   cpumask: 40000
 
+tuned:
+  profile: realtime-virtual-host
+  rt_cores: 11-21
+
 networking:
-  infrastructurebus:
-    nic: ""
-    ip4: "172.16.10.1/24"
-    gw4: 172.16.10.1
-    dns4: 8.8.8.8
   stationbus:
-    nic: enp6s0
+    nic: ens3f3
     ip4: "172.16.20.1/24"
     gw4: 172.16.20.1
     dns4: 8.8.8.8
   processbus:
-    nic: "ens2f0"
+    nic: "ens3f0"
 
 ssc600_ptp:
   status_dir: /home/libvirt-local/ptp/
@@ -30,7 +24,6 @@ ssc600_ptp:
   ptp4l_options: "-l 5 -A --clientOnly=1 --step_threshold=0.1"
 
 ssc600_bundle:
-  download_link: "https://campaign-el.abb.com/l/961032/-DocumentPartId--Action-Launch/6mjq2"
   file: SSC600_SW_KVM-1.5.1.cab
   path: /home/software
-  extracted_path: "{{ path }}/abb"
+  extracted_path: /home/software/abb
