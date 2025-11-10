@@ -14,7 +14,6 @@ builder_compose_pkgs:
 - cockpit
 - cockpit-machines
 - cockpit-podman
-- cockpit
 - cloud-init
 - cloud-utils-growpart
 - unzip
@@ -25,6 +24,7 @@ builder_compose_pkgs:
 - libvirt
 - virt-install
 - virt-viewer
+- swtpm
 - swtpm-tools
 - dosfstools
 - edk2-ovmf #uefi firmware for windows 11 install
@@ -50,7 +50,6 @@ builder_kickstart_options:
 - timezone America/Los_Angeles --utc
 - text
 - liveimg --url file:///run/install/repo/liveimg.tar.gz
-- firstboot --disable #disable firstboot
 - zerombr # Clear the MBR/GPT on all detected disks
 - bootloader --location=mbr
 - clearpart --all --initlabel # Clears all partitions on sda and initializes the disk label
@@ -67,4 +66,4 @@ builder_kickstart_options:
 - reboot --eject
 
 # cloudinit
-hostname: "vpac-redhat"
+hostname: "vpac-rhel"
