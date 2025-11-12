@@ -6,4 +6,50 @@
     - name: Run the osbuild setup_server role to configure imagebuilder host
       ansible.builtin.import_role:
         name: infra.osbuild.setup_server
-        
+    - name: Update imagebuilder sources for RT and NFV packages
+      block:
+      - name: Create a temp realtime-baseos.toml file
+        ansible.builtin.tempfile:
+          state: file
+          suffix: toml
+        register: realtime_baseos
+      - name: Update realtime baseos toml file
+        ansible.builtin.copy:
+          dest: "{{ realtime_baseos.path }}"
+          content: |
+            id = "realtime-baseos"
+            name = "Realtime baseos packages"
+            type = "yum-baseurl"
+            url = "https://cdn.redhat.com/content/dist/rhel9/9/{{ ansible_architecture }}/rt/os/"
+            check_gpg = true
+            check_ssl = true
+            system = false
+            rhsm = true
+          owner: root
+          group: root
+          mode: u=rw,g=r,o=r 
+      - name: Create a temp nfv-baseos toml file
+        ansible.builtin.tempfile:
+          state: file
+          suffix: toml
+        register: nfv_baseos
+      - name: Update NFV baseos toml file
+        ansible.builtin.copy:
+          dest: "{{ nfv_baseos.path }}"
+          content: |
+            id = "nfv-baseos"
+            name = "NFV baseos packages"
+            type = "yum-baseurl"
+            url = "https://cdn.redhat.com/content/dist/rhel9/9/{{ ansible_architecture }}/nfv/os/"
+            check_gpg = true
+            check_ssl = true
+            system = false
+            rhsm = true
+          owner: root
+          group: root
+          mode: u=rw,g=r,o=r
+      - name: Add to imagebuilder sources
+        ansible.builtin.command: "sudo composer-cli sources add {{ item }}"
+        loop:
+        - "{{ realtime_baseos.path }}"
+        - "{{ nfv_baseos.path }}"

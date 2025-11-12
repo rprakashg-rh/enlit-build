@@ -28,10 +28,10 @@ builder_compose_pkgs:
 - swtpm-tools
 - dosfstools
 - edk2-ovmf #uefi firmware for windows 11 install
-#- kernel-rt
-#- kernel-rt-kvm
-#- tuned-profiles-nfv-host
-#- realtime-tests
+- kernel-rt
+- kernel-rt-kvm
+- tuned-profiles-nfv-host
+- realtime-tests
 - dnf-plugins-core
 - python3-dnf-plugin-versionlock #versionlock 
 builder_compose_customizations:
