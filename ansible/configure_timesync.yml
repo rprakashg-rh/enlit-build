@@ -1,4 +1,4 @@
-- name: Justing running PTP config
+- name: Playbook to just run PTP config
   hosts: virtualization_hosts
   gather_facts: yes
   become: yes
