@@ -1,9 +1,0 @@
----
-- name: Ansible playbook that automates setup of a vpac system
-  hosts: virtualization_hosts
-  gather_facts: yes
-
-  tasks:
-  - name: testing download bundle
-    ansible.builtin.import_role:
-      name: rprakashg.vpac.prepare_system_for_ssc600sw

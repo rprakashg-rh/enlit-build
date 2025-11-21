@@ -1,0 +1,12 @@
+vm_name: winhmi
+vm_memory: 16000
+vm_vcpus: 4
+
+# disk image, be sure to create this with windows 11 pro 
+# installed and configured copy it to host machine
+qcow2_disk_image: winhmi_disk.qcow2
+disk_size: 128G
+
+# User defaults
+admin_user: admin
+organization: redhat

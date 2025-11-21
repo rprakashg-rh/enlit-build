@@ -1,0 +1,13 @@
+---
+- name: Ansible playbook that automates creation of windows HMI
+  hosts: windows_test
+  gather_facts: yes
+
+  tasks:
+  - name: Load ansible vault
+    ansible.builtin.include_vars:
+      file: "./vars/secrets.yml"
+  - name: Import create windows vm role
+    ansible.builtin.import_role:
+      name: rprakashg.vpac.create_windows_vm
+      

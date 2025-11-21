@@ -197,5 +197,9 @@ ansible-playbook -i inventory deploy_ssc600_vm.yml -e @vars/vcpc1a.yml
 ```
 
 ## Install and Configure Windows HMI
+This section covers steps to install and configure windows HMI where typhoon HIL simulations will run.
 
 
+```sh
+ansible-playbook -i inventory --vault-password-file <(echo "$VAULT_SECRET") create_winhmi.yml -e @vars/winhmi.yml
+```
